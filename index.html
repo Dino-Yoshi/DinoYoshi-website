@@ -1,71 +1,91 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DinoYoshi Website</title>
-  <style>
-    /*
-      Center the content vertically and horizontally using flexbox.
-      Set a white background and remove default margin.
-    */
-    @font-face{
-        font-family: 'andyb';
-        src: url('fonts/Terraria-Font/ANDYB.TTF') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-    }
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fff;
-    }
-
-    /*
-      The .typing class styles the name and creates the typing effect:
-      - Monospace font for a terminal-like look
-      - Blinking caret using border-right and animation
-      - Typing animation reveals the text one character at a time
-      - Overflow hidden and white-space nowrap keep the effect clean
-    */
-    .typing {
-      font-size: 2.5rem;
-      font-family: andyb, monospace; /* Custom font for a unique look */
-      color: #222;
-      white-space: nowrap;
-      border-right: 2px solid #222;
-      width: fit-content;
-      margin: 0 auto;
-      overflow: hidden;
-      animation:
-        typing 2s steps(9, end),
-        blink-caret 0.7s step-end infinite;
-    }
-
-    /*
-      Typing animation: expands the width from 0 to 9 characters ("DinoYoshi")
-    */
-    @keyframes typing {
-      from { width: 0 }
-      to { width: 9ch }
-    }
-
-    /*
-      Blinking caret animation: toggles the border color to simulate a cursor
-    */
-    @keyframes blink-caret {
-      from, to { border-color: transparent }
-      50% { border-color: #222; }
-    }
-  </style>
+  <title>
+    Darien Chau - Personal Portfolio
+  </title>
+  <!-- Link to external stylesheet for all page styles. See style.css for font, layout, and animation details. -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!--
-    This div displays your name with a typing animation and blinking caret.
-  -->
-  <div class="typing">DinoYoshi</div>
+  
+  <!-- <h1>Darien Chau : Personal Page</h1> -->
+
+  <h2>About Me</h2>
+
+  <div class="typing">
+    <span id="typed"></span><span class="caret">
+       <!-- This div displays your name with a typing animation and blinking caret. The text is typed out by main.js, and the caret blinks via CSS. -->
+    </span>
+  </div>
+
+  <script src="main.js">
+    // Link to external JavaScript for typing animation logic. See main.js for details. -->
+  </script>
+
+  <img src="./images/darien.png" alt ="Darien Chau Picture" width="366.8" height="302.4">
+
+  <p>
+    Hello! I'm Darien, a Computer Science student at Cal State East Bay with a 4.0 GPA, graduating in May 2027. 
+    I work on campus as a Learning Assistant where I help supplement student learning, coach their study habits, and run small support sessions before major assessments.
+    Prior, I tutored 4th-6th grade math one-on-one, which influenced my eventual mastery of patience and communication.
+    I learn best by shipping and by actively working with others or by myself. I built a React + Nginx address book app with account registration, login, cookies, and full client-side flow.
+    At MESA U Hacks, my team earned 2nd Best Pitch for NimbusNotes, where I handled the backend and API. Early in my career, I helped prototype a simple cipher helper using the Perplexity API at Hack Hayward.
+    Currently: I work in Python, C++, React, Linux, and Git, and am actively learning ML and SQL.
+    Being sincere, the joy of creation and creativity that programming brings is ultimately what shapes me, both as a person and my journey to exceed the person I was yesterday.
+  
+  </p>
+
+  <h2>Projects and Experience</h2>
+
+
+  <img src="./images/mesalogo.png" alt ="Mesa Logo" width="100" height="100">
+
+  <p>
+    MESA U HACKS 2025 - 2nd Best Pitch
+  </p>
+
+  <img src="./images/stemlogo.jpeg" alt ="Stem Logo" width="100" height="100">
+
+  <p>
+    Learning Assistant - California State University, East Bay
+  </p>
+
+  <img src="./images/hackhaywardlogo.jpg" alt ="HH Logo" width="100" height="100">
+
+  <p>
+    Hack Hayward 2024
+  </p>
+
+  <img src="./images/stepuptutoringlogo.jpg" alt ="SUT Logo" width="100" height="100">
+
+  <p>
+    Student Tutor - Step Up Tutoring
+  </p>
+  
+  <h3>Contacts</h3>
+
+  <ul>
+    <img src="./images/github.png" alt ="github Logo" width="100" height="100">
+    <p>Github: <a href="https://github.com/Dino-Yoshi">DinoYoshi</a></p>
+    <img src="./images/linkedin.png" alt ="Linkedin Logo" width="100" height="100">
+    <p>LinkedIn: <a href="https://www.linkedin.com/in/darien-chau/">Darien Chau</a></p>
+    <img src="./images/handshake.jpg" alt ="handshake Logo" width="100" height="100">
+    <p>Handshake: <a href="https://app.joinhandshake.com/profiles/darien_chau">Link</a></p>
+  </ul>
+  
+</body>
+
+<!--
+<body>
+  <div id="placeholder">
+    <script>
+      const message = "Hello World!";
+      document.getElementById("placeholder").textContent = message;
+    </script>
+  </div>
 </body>
 </html>
+-->

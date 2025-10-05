@@ -1,0 +1,93 @@
+/*
+  style.css
+  This file contains all the styles for the DinoYoshi website.
+  Linked from index.html.
+*/
+
+@font-face {
+  font-family: 'andyb';
+  src: url('fonts/Terraria-Font/ANDYB.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+/*
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  background: #fff;
+}
+  */
+
+html{
+  font-size: 24px;
+  font-family: andyb;
+}
+
+
+p, li{
+  font-size: 24px;
+  line-height: 2;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+
+img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 8px;
+}
+
+
+h1{
+  font-family: andyb, monospace;
+  font-size: 4rem;
+  color: #222;
+  margin: 0 auto;
+  width: 60%;
+  text-align: center;
+}
+
+h2{
+  font-family: andyb, monospace;
+  font-size: 3rem;
+  color: #222;
+  margin: 0 auto;
+  width: 60%;
+  text-align: center;
+}
+
+h3{
+  font-family: andyb, monospace;
+  font-size: 2rem;
+  color: #222;
+  margin: 0 auto;
+  width: 60%;
+  text-align: center;
+}
+
+.typing {
+  
+  font-size: 5rem;
+  font-family: andyb, monospace;
+  text-align: center;
+  color: #222;
+  white-space: nowrap;
+  margin: 0 auto;
+  display: auto;
+}
+
+.caret {
+  border-right: 2px solid #222;
+  height: 1em;
+  animation: blink-caret 0.7s step-end infinite;
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: #222; }
+}
