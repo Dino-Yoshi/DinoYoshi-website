@@ -90,6 +90,24 @@ h2 {
 
 /* 3. Layout */
 
+.about-me-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5rem;
+  width: max-content;
+  margin: 0 auto;
+}
+
+.about-me-content p {
+  border: 2px solid #222;
+  padding: 2rem;
+  border-radius: 8px;
+  font-size: 22.5px;
+  max-width: 60ch;
+  text-align: left;
+}
+
 .projects-container {
   position: relative;
   width: 60%;
