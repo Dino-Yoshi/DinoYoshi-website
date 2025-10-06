@@ -1,19 +1,25 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="description" content="Personal portfolio for Darien Chau, a Computer Science student at Cal State East Bay.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>
-    Darien Chau - Personal Portfolio
+    Darien Chau - Portfolio
   </title>
   <!-- Link to external stylesheet for all page styles. See style.css for font, layout, and animation details. -->
   <link rel="stylesheet" href="style.css">
+  <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
+  </script>
 </head>
 <body>
+  <main>
   
-  <!-- <h1>Darien Chau : Personal Page</h1> -->
 
-  <h2>About Me</h2>
+
+  <section id="about-me">
+    <h1>About Me</h1>
 
   <div class="typing">
     <span id="typed"></span><span class="caret">
@@ -21,11 +27,9 @@
     </span>
   </div>
 
-  <script src="main.js">
-    // Link to external JavaScript for typing animation logic. See main.js for details. -->
-  </script>
+  <script src="main.js" defer></script>
 
-  <img src="./images/darien.png" alt ="Darien Chau Picture" width="366.8" height="302.4">
+  <img src="./images/darien.png" alt="A picture of Darien Chau, a young man with short black hair, smiling and wearing a blue shirt." class="profile-picture">
 
   <p>
     Hello! I'm Darien, a Computer Science student at Cal State East Bay with a 4.0 GPA, graduating in May 2027. 
@@ -37,55 +41,92 @@
     Being sincere, the joy of creation and creativity that programming brings is ultimately what shapes me, both as a person and my journey to exceed the person I was yesterday.
   
   </p>
+  </section>
 
-  <h2>Projects and Experience</h2>
+  <section id="projects-and-experience">
+    <h1>Projects and Experience</h1>
 
 
-  <img src="./images/mesalogo.png" alt ="Mesa Logo" width="100" height="100">
-
-  <p>
-    MESA U HACKS 2025 - 2nd Best Pitch
-  </p>
-
-  <img src="./images/stemlogo.jpeg" alt ="Stem Logo" width="100" height="100">
-
-  <p>
-    Learning Assistant - California State University, East Bay
-  </p>
-
-  <img src="./images/hackhaywardlogo.jpg" alt ="HH Logo" width="100" height="100">
-
-  <p>
-    Hack Hayward 2024
-  </p>
-
-  <img src="./images/stepuptutoringlogo.jpg" alt ="SUT Logo" width="100" height="100">
-
-  <p>
-    Student Tutor - Step Up Tutoring
-  </p>
-  
-  <h3>Contacts</h3>
-
-  <ul>
-    <img src="./images/github.png" alt ="github Logo" width="100" height="100">
-    <p>Github: <a href="https://github.com/Dino-Yoshi">DinoYoshi</a></p>
-    <img src="./images/linkedin.png" alt ="Linkedin Logo" width="100" height="100">
-    <p>LinkedIn: <a href="https://www.linkedin.com/in/darien-chau/">Darien Chau</a></p>
-    <img src="./images/handshake.jpg" alt ="handshake Logo" width="100" height="100">
-    <p>Handshake: <a href="https://app.joinhandshake.com/profiles/darien_chau">Link</a></p>
-  </ul>
-  
-</body>
-
-<!--
-<body>
-  <div id="placeholder">
-    <script>
-      const message = "Hello World!";
-      document.getElementById("placeholder").textContent = message;
-    </script>
+  <div class="projects-container">
+    <div class="projects-carousel">
+      <div class="project-item active">
+        <img src="./images/mesalogo.png" alt="Logo for MESA U HACKS 2025, where I won 2nd Best Pitch." class="project-image">
+        <p>MESA U HACKS 2025 - 2nd Best Pitch</p>
+      </div>
+      <div class="project-item">
+        <img src="./images/stemlogo.jpeg" alt="Logo for the STEM program at California State University, East Bay, where I work as a Learning Assistant." class="project-image">
+        <p>Learning Assistant - California State University, East Bay</p>
+      </div>
+      <div class="project-item">
+        <img src="./images/hackhaywardlogo.jpg" alt="Logo for Hack Hayward 2025, a hackathon I participated in." class="project-image">
+        <p>Hack Hayward 2025</p>
+      </div>
+      <div class="project-item">
+        <img src="./images/stepuptutoringlogo.jpg" alt="Logo for Step Up Tutoring, where I worked as a Student Tutor." class="project-image">
+        <p>Student Tutor - Step Up Tutoring</p>
+      </div>
+    </div>
+    <div class="carousel-buttons">
+      <button id="prev-button">&lt;</button>
+      <button id="next-button">&gt;</button>
+    </div>
   </div>
+
+  <div id="project-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h3 id="modal-title"></h3>
+      <p id="modal-description"></p>
+    </div>
+  </div>
+  </section>
+  
+  <section id="contacts">
+    <h2>Contacts</h2>
+
+  <div class="contact-links">
+    <a href="https://github.com/Dino-Yoshi" class="contact-button">
+      <img src="./images/github.png" alt="GitHub logo, which links to my GitHub profile." class="contact-image">
+      <span>Github</span>
+    </a>
+    <a href="https://www.linkedin.com/in/darien-chau/" class="contact-button">
+      <img src="./images/linkedin.png" alt="LinkedIn logo, which links to my LinkedIn profile." class="contact-image">
+      <span>LinkedIn</span>
+    </a>
+    <a href="https://app.joinhandshake.com/profiles/darien_chau" class="contact-button">
+      <img src="./images/handshake.jpg" alt="Handshake logo, which links to my Handshake profile." class="contact-image">
+      <span>Handshake</span>
+    </a>
+  </div>
+
+  
+  <div class="contact-form-container">
+    <h2>Contact Me</h2>
+    <form id="contact-form">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      <div class="form-group">
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" name="subject" required>
+      </div>
+
+      <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" required></textarea>
+      </div>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+  </section>
+
+
+  
+  
+  </main>
 </body>
-</html>
--->

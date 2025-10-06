@@ -2,7 +2,16 @@
   style.css
   This file contains all the styles for the DinoYoshi website.
   Linked from index.html.
+
+  Table of Contents:
+  1. General Styles
+  2. Typography
+  3. Layout
+  4. Components
+  5. Keyframes
 */
+
+/* 1. General Styles */
 
 @font-face {
   font-family: 'andyb';
@@ -10,75 +19,67 @@
   font-weight: normal;
   font-style: normal;
 }
-/*
-body {
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  background: #fff;
-}
-  */
 
 html{
-  font-size: 24px;
   font-family: andyb;
+  font-size: 24px;
 }
-
 
 p, li{
   font-size: 24px;
-  line-height: 2;
   letter-spacing: 1px;
+  line-height: 2;
   text-align: center;
 }
-
 
 img{
   display: block;
-  margin-left: auto;
   margin-right: auto;
+  margin-left: auto;
   border-radius: 8px;
 }
 
+.profile-picture {
+  width: 366.8px;
+  height: 302.4px;
+}
 
-h1{
+.project-image {
+  width: 100px;
+  height: 100px;
+}
+
+.contact-image {
+  width: 50px;
+  height: 50px;
+}
+
+
+/* 2. Typography */
+
+h1, h2 {
   font-family: andyb, monospace;
-  font-size: 4rem;
   color: #222;
   margin: 0 auto;
   width: 60%;
   text-align: center;
 }
 
-h2{
-  font-family: andyb, monospace;
+h1 {
   font-size: 3rem;
-  color: #222;
-  margin: 0 auto;
-  width: 60%;
-  text-align: center;
 }
 
-h3{
-  font-family: andyb, monospace;
+h2 {
   font-size: 2rem;
-  color: #222;
-  margin: 0 auto;
-  width: 60%;
-  text-align: center;
 }
 
 .typing {
-  
-  font-size: 5rem;
+  margin: 0 auto;
+  white-space: nowrap;
   font-family: andyb, monospace;
+  font-size: 5rem;
   text-align: center;
   color: #222;
-  white-space: nowrap;
-  margin: 0 auto;
-  display: auto;
 }
 
 .caret {
@@ -86,6 +87,182 @@ h3{
   height: 1em;
   animation: blink-caret 0.7s step-end infinite;
 }
+
+/* 3. Layout */
+
+.projects-container {
+  position: relative;
+  width: 60%;
+  margin: 0 auto;
+}
+
+.projects-carousel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carousel-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+/* 4. Components */
+
+/* Project Carousel */
+.project-item {
+  display: none;
+  text-align: center;
+}
+
+.project-item.active {
+  display: block;
+}
+
+.carousel-buttons button {
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #222;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal.active {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  position: relative;
+  width: 90%;
+  max-width: 800px;
+  padding: 20px;
+  border: 1px solid #888;
+  background-color: #fefefe;
+  text-align: left;
+  white-space: normal;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Contact Links */
+.contact-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.contact-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 2px solid #222;
+  border-radius: 8px;
+  color: #222;
+  text-decoration: none;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.contact-button:hover {
+  background-color: #222;
+  color: #fff;
+}
+
+.contact-button img {
+  width: 30px;
+  height: 30px;
+}
+
+/* Contact Form */
+.contact-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 35%;
+  margin: 2rem auto;
+  padding: 2rem;
+  border: 2px solid #222;
+  border-radius: 8px;
+}
+
+.contact-form-container h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: sans-serif;
+  resize: none;
+}
+
+#contact-form button {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #222;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#contact-form button:hover {
+  background-color: #444;
+}
+
+/* 5. Keyframes */
 
 @keyframes blink-caret {
   from, to { border-color: transparent }
