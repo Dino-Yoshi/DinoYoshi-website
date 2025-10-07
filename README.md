@@ -12,8 +12,8 @@ This is my personal portfolio website. It showcases my skills, projects, and exp
 
 ## Assisted By
 
-* GitHub Copilot
-* Gemini CLI
+*   **GitHub Copilot:** Algorithm and Reasoning
+*   **Gemini CLI:** Code Cleaning and Implementation Refinement
 
 ## Contact
 

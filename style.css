@@ -23,13 +23,26 @@
 html{
   font-family: andyb;
   font-size: 24px;
+  scroll-snap-type: y mandatory;
+}
+
+section {
+  scroll-snap-align: start;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 p, li{
   font-size: 24px;
   letter-spacing: 1px;
-  line-height: 2;
+  line-height: 1.5;
   text-align: center;
+}
+
+.project-item p {
+  font-size: 20px;
 }
 
 img{
@@ -40,8 +53,8 @@ img{
 }
 
 .profile-picture {
-  width: 366.8px;
-  height: 302.4px;
+  width: 300px;
+  height: 247.5px;
 }
 
 .project-image {
@@ -66,7 +79,7 @@ h1, h2 {
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: 2.5rem;
 }
 
 h2 {
@@ -77,7 +90,7 @@ h2 {
   margin: 0 auto;
   white-space: nowrap;
   font-family: andyb, monospace;
-  font-size: 5rem;
+  font-size: 4rem;
   text-align: center;
   color: #222;
 }
@@ -94,14 +107,14 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5rem;
+  gap: 2rem;
   width: max-content;
   margin: 0 auto;
 }
 
 .about-me-content p {
   border: 2px solid #222;
-  padding: 2rem;
+  padding: 1rem;
   border-radius: 8px;
   font-size: 22.5px;
   max-width: 60ch;
@@ -112,12 +125,13 @@ h2 {
   position: relative;
   width: 60%;
   margin: 0 auto;
+  overflow: hidden;
 }
 
 .projects-carousel {
   display: flex;
-  justify-content: center;
   align-items: center;
+  transition: transform 0.5s ease;
 }
 
 .carousel-buttons {
@@ -131,12 +145,15 @@ h2 {
 
 /* Project Carousel */
 .project-item {
-  display: none;
+  display: block;
   text-align: center;
+  flex: 0 0 33.33%;
+  transition: transform 0.5s ease;
+  transform: scale(0.8);
 }
 
 .project-item.active {
-  display: block;
+  transform: scale(1);
 }
 
 .carousel-buttons button {
@@ -197,9 +214,17 @@ h2 {
 /* Contact Links */
 .contact-links {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 1rem;
+}
+
+.contact-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
   margin-top: 2rem;
 }
 
@@ -215,23 +240,12 @@ h2 {
   transition: background-color 0.3s, color 0.3s;
 }
 
-.contact-button:hover {
-  background-color: #222;
-  color: #fff;
-}
-
-.contact-button img {
-  width: 30px;
-  height: 30px;
-}
-
 /* Contact Form */
 .contact-form-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 35%;
-  margin: 2rem auto;
   padding: 2rem;
   border: 2px solid #222;
   border-radius: 8px;
