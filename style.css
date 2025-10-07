@@ -18,12 +18,15 @@
   src: url('fonts/custom/ANDYB.TTF') format('truetype');
   font-weight: normal;
   font-style: normal;
+  color: #fff;
 }
 
 html{
   font-family: andyb;
   font-size: 24px;
   scroll-snap-type: y mandatory;
+  background: linear-gradient(to bottom, #2b97a8, #1e3589);
+  background-attachment: fixed;
 }
 
 section {
@@ -70,9 +73,9 @@ img{
 
 /* 2. Typography */
 
-h1, h2 {
+h1, h2, h3 {
   font-family: andyb, monospace;
-  color: #222;
+  color: #fff;
   margin: 0 auto;
   width: 60%;
   text-align: center;
@@ -96,11 +99,11 @@ h3{
   font-family: andyb, monospace;
   font-size: 4rem;
   text-align: center;
-  color: #222;
+  color: #ffffff;
 }
 
 .caret {
-  border-right: 2px solid #222;
+  border-right: 2px solid #ffffff;
   height: 1em;
   animation: blink-caret 0.7s step-end infinite;
 }
@@ -117,12 +120,13 @@ h3{
 }
 
 .about-me-content p {
-  border: 2px solid #222;
+  border: 2px solid #ffffff;
   padding: 1rem;
   border-radius: 8px;
   font-size: 22.5px;
   max-width: 60ch;
   text-align: left;
+  color:#ffffff
 }
 
 .projects-container {
@@ -164,8 +168,8 @@ h3{
   margin: 0 0.5rem;
   padding: 0.5rem 1rem;
   border: none;
-  background-color: #222;
-  color: #fff;
+  background-color: #ffffff;
+  color: #000000;
   font-size: 1.5rem;
   cursor: pointer;
 }
@@ -180,6 +184,14 @@ h3{
   width: 100%;
   height: 100%;
   background-color: rgba(0,0,0,0.4);
+}
+
+.project-item.active p {
+  color:#ffffff
+}
+
+.project-item p{
+  color:#ffffff
 }
 
 .modal.active {
@@ -237,9 +249,9 @@ h3{
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  border: 2px solid #222;
+  border: 2px solid #ffffff;
   border-radius: 8px;
-  color: #222;
+  color: #ffffff;
   text-decoration: none;
   transition: background-color 0.3s, color 0.3s;
 }
@@ -251,7 +263,7 @@ h3{
   align-items: center;
   width: 35%;
   padding: 2rem;
-  border: 2px solid #222;
+  border: 2px solid #ffffff;
   border-radius: 8px;
 }
 
@@ -269,13 +281,14 @@ h3{
   display: block;
   margin-bottom: 0.5rem;
   font-size: 1rem;
+  color:#ffffff
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
   padding: 0.8rem;
-  border: 1px solid #ccc;
+  border: 1px solid #cfcaca;
   border-radius: 4px;
   font-size: 1rem;
   font-family: sans-serif;
@@ -302,5 +315,5 @@ h3{
 
 @keyframes blink-caret {
   from, to { border-color: transparent }
-  50% { border-color: #222; }
+  50% { border-color: #cacaca; }
 }
