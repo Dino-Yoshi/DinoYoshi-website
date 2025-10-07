@@ -15,7 +15,7 @@
 
 @font-face {
   font-family: 'andyb';
-  src: url('fonts/Terraria-Font/ANDYB.TTF') format('truetype');
+  src: url('fonts/custom/ANDYB.TTF') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -42,7 +42,7 @@ p, li{
 }
 
 .project-item p {
-  font-size: 20px;
+  font-size: 25px;
 }
 
 img{
@@ -84,6 +84,10 @@ h1 {
 
 h2 {
   font-size: 2rem;
+}
+
+h3{
+  text-align : center;
 }
 
 .typing {
