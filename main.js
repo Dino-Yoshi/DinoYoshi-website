@@ -23,21 +23,6 @@ type();
 
 // Carousel and modal logic
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Typing Animation --- //
-    const typingText = "Darien Chau";
-    const typedElement = document.getElementById("typed");
-    const typingSpeed = 120;
-    let charIndex = 0;
-
-    function type() {
-        if (charIndex <= typingText.length) {
-            typedElement.textContent = typingText.slice(0, charIndex);
-            charIndex++;
-            setTimeout(type, typingSpeed);
-        }
-    }
-    type();
-
     // --- Project Carousel & Modal --- //
 
     // 1. Initialization

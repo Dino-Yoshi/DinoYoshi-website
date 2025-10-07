@@ -2,31 +2,23 @@
   style.css
   This file contains all the styles for the DinoYoshi website.
   Linked from index.html.
-
-  Table of Contents:
-  1. General Styles
-  2. Typography
-  3. Layout
-  4. Components
-  5. Keyframes
 */
 
 /* 1. General Styles */
-
 @font-face {
   font-family: 'andyb';
   src: url('fonts/custom/ANDYB.TTF') format('truetype');
   font-weight: normal;
   font-style: normal;
-  color: #fff;
 }
 
-html{
+html {
   font-family: andyb;
   font-size: 24px;
   scroll-snap-type: y mandatory;
   background: linear-gradient(to bottom, #2b97a8, #1e3589);
   background-attachment: fixed;
+  color: white;
 }
 
 section {
@@ -37,18 +29,15 @@ section {
   justify-content: center;
 }
 
-p, li{
+p,
+li {
   font-size: 24px;
   letter-spacing: 1px;
   line-height: 1.5;
   text-align: center;
 }
 
-.project-item p {
-  font-size: 25px;
-}
-
-img{
+img {
   display: block;
   margin-right: auto;
   margin-left: auto;
@@ -70,12 +59,11 @@ img{
   height: 50px;
 }
 
-
 /* 2. Typography */
-
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: andyb, monospace;
-  color: #fff;
   margin: 0 auto;
   width: 60%;
   text-align: center;
@@ -89,8 +77,8 @@ h2 {
   font-size: 2rem;
 }
 
-h3{
-  text-align : center;
+h3 {
+  text-align: center;
 }
 
 .typing {
@@ -99,17 +87,15 @@ h3{
   font-family: andyb, monospace;
   font-size: 4rem;
   text-align: center;
-  color: #ffffff;
 }
 
 .caret {
-  border-right: 2px solid #ffffff;
+  border-right: 2px solid white;
   height: 1em;
   animation: blink-caret 0.7s step-end infinite;
 }
 
 /* 3. Layout */
-
 .about-me-content {
   display: flex;
   align-items: center;
@@ -120,13 +106,12 @@ h3{
 }
 
 .about-me-content p {
-  border: 2px solid #ffffff;
+  border: 2px solid white;
   padding: 1rem;
   border-radius: 8px;
   font-size: 22.5px;
   max-width: 60ch;
   text-align: left;
-  color:#ffffff
 }
 
 .projects-container {
@@ -149,6 +134,14 @@ h3{
   margin-top: 1rem;
 }
 
+.contact-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
 /* 4. Components */
 
 /* Project Carousel */
@@ -164,12 +157,16 @@ h3{
   transform: scale(1);
 }
 
+.project-item p {
+  font-size: 25px;
+}
+
 .carousel-buttons button {
   margin: 0 0.5rem;
   padding: 0.5rem 1rem;
-  border: none;
-  background-color: #ffffff;
-  color: #000000;
+  border: 2px solid white;
+  background-color: transparent;
+  color: white;
   font-size: 1.5rem;
   cursor: pointer;
 }
@@ -183,15 +180,7 @@ h3{
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.4);
-}
-
-.project-item.active p {
-  color:#ffffff
-}
-
-.project-item p{
-  color:#ffffff
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal.active {
@@ -209,6 +198,7 @@ h3{
   background-color: #fefefe;
   text-align: left;
   white-space: normal;
+  color: #222;
 }
 
 .close-button {
@@ -236,24 +226,21 @@ h3{
   gap: 1rem;
 }
 
-.contact-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-  margin-top: 2rem;
-}
-
 .contact-button {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  border: 2px solid #ffffff;
+  border: 2px solid white;
   border-radius: 8px;
-  color: #ffffff;
+  color: white;
   text-decoration: none;
   transition: background-color 0.3s, color 0.3s;
+}
+
+.contact-button:hover {
+  background-color: white;
+  color: #1e3589;
 }
 
 /* Contact Form */
@@ -263,13 +250,8 @@ h3{
   align-items: center;
   width: 35%;
   padding: 2rem;
-  border: 2px solid #ffffff;
+  border: 2px solid white;
   border-radius: 8px;
-}
-
-.contact-form-container h2 {
-  text-align: center;
-  margin-bottom: 1rem;
 }
 
 .form-group {
@@ -281,39 +263,45 @@ h3{
   display: block;
   margin-bottom: 0.5rem;
   font-size: 1rem;
-  color:#ffffff
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
   padding: 0.8rem;
-  border: 1px solid #cfcaca;
+  border: 1px solid white;
   border-radius: 4px;
   font-size: 1rem;
   font-family: sans-serif;
   resize: none;
+  background-color: transparent;
+  color: white;
 }
 
 #contact-form button {
   display: block;
   width: 100%;
   padding: 0.75rem;
-  border: none;
+  border: 2px solid white;
   border-radius: 4px;
-  background-color: #222;
-  color: #fff;
+  background-color: transparent;
+  color: white;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 #contact-form button:hover {
-  background-color: #444;
+  background-color: white;
+  color: #1e3589;
 }
 
 /* 5. Keyframes */
-
 @keyframes blink-caret {
-  from, to { border-color: transparent }
-  50% { border-color: #cacaca; }
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: white;
+  }
 }
