@@ -40,10 +40,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentProject = 1; // Start at the first real project (not the clone)
 
     const projectDetails = [
-        { title: 'MESA U HACKS 2.0', description: 'At MESA U Hacks 2.0 in September 2025, I participated on a team building a study tool called NimbusNotes. I developed the backend and API in Python/FastAPI, integrating AWS services and the model with the front end. The app accepted file and image uploads; GPT-4.1 Mini converted the content into flashcards and quizzes for solo review or group competition. Our team won the 2nd Best Pitch category.' },
-        { title: 'Learning Assistant', description: 'At California State University, East Bay, I currently serve as a Learning Assistant for Python coursework or queries supporting 20+ students. I have collaborated with TAs to guide the development of assignments, coach students on study habits and how to use campus resources. Further, I lead 5-6 small-group support sessions before major assessments per semester. This work has sharpened how I both understand and explain concepts and structure practice so students can approach problems step by step and solve independently.' },
-        { title: 'Hack Hayward', description: 'I participated in Hack Hayward 2025 in Hayward, CA. Our team built a small tool that used the Perplexity API and AI to encrypt and decrypt simple ciphers, like a Caesar cipher. I contributed through workshops and teamwork to move the cipher tool forward.' },
-        { title: 'Student Tutor', description: 'At Step Up Tutoring from Oct 2023-May 2024, I served as a 4th-6th Grade Math Tutor. I guided students through core math concepts in one-on-one hourly sessions and built strong relationships over seven months, collaborating with staff and colleagues to support each student.' }
+        { title: 'DogCheck', link: 'https://colab.research.google.com/drive/181N1rNfrWUJV3g9JaynXLc1GGnDk0kI_?usp=sharing', description: 'Between November and December 2025, I developed DogCheck, a machine learning project aimed at identifying dog groups or roles from a rigorously labeled dataset comprised of over 250+ breeds. Utilizing fundamental libraries such as Pandas and NumPy for data handling alongside scikit-learn for model development, I trained a gradient boosting classifier (XGBClassifier) that achieved an accuracy of 79% on unseen data. Mainly, most of my time was spent on data preprocessing and feature engineering more than anything else.'},
+        { title: 'MESA U HACKS 2.0', link: 'https://github.com/Jdeww/Mesa-U-Hacks-2.0', description: 'At MESA U Hacks 2.0 in September 2025, I participated on a team building a study tool called NimbusNotes. I developed the backend and API in Python/FastAPI, integrating AWS services and the model with the front end. The app accepted file and image uploads; GPT-4.1 Mini converted the content into flashcards and quizzes for solo review or group competition. Our team won the 2nd Best Pitch category.'},
+        { title: 'Learning Assistant', link: 'https://www.csueastbay.edu/stemlab/', description: 'At California State University, East Bay, I currently serve as a Learning Assistant for Python coursework or queries supporting 20+ students. I have collaborated with TAs to guide the development of assignments, coach students on study habits and how to use campus resources. Further, I lead 5-6 small-group support sessions before major assessments per semester. This work has sharpened how I both understand and explain concepts and structure practice so students can approach problems step by step and solve independently.' },
+        { title: 'Hack Hayward', link: 'https://gdg.community.dev/events/details/google-gdg-on-campus-california-state-university-east-bay-hayward-united-states-presents-build-with-ai-hackhayward/', description: 'I participated in Hack Hayward 2025 in Hayward, CA. Our team built a small tool that used the Perplexity API and AI to encrypt and decrypt simple ciphers, like a Caesar cipher. I contributed through workshops and teamwork to move the cipher tool forward.' },
+        { title: 'Student Tutor', link: 'https://www.stepuptutoring.org/', description: 'At Step Up Tutoring from Oct 2023-May 2024, I served as a 4th-6th Grade Math Tutor. I guided students through core math concepts in one-on-one hourly sessions and built strong relationships over seven months, collaborating with staff and colleagues to support each student.' }
     ];
 
     // 2. Carousel Setup (Infinite Loop)
@@ -96,7 +97,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 4. Modal Logic
     function openModal(index) {
-        modalTitle.textContent = projectDetails[index].title;
+        // If a link is provided for the project, render the title as an embedded anchor
+        // so users can click it from inside the modal. Otherwise, render plain text.
+        const proj = projectDetails[index];
+        if (proj.link) {
+            modalTitle.innerHTML = `<a href="${proj.link}" target="_blank" rel="noopener noreferrer">${proj.title}</a>`;
+        } else {
+            modalTitle.textContent = proj.title;
+        }
         modalDescription.textContent = projectDetails[index].description;
         modal.classList.add('active');
     }
