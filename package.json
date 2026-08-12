@@ -1,0 +1,15 @@
+{
+  "name": "dinoyoshi-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static portfolio website for Darien Chau.",
+  "scripts": {
+    "test": "vitest run",
+    "check:links": "node scripts/check-links.js",
+    "verify": "npm test && npm run check:links"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0",
+    "vitest": "^3.2.4"
+  }
+}
