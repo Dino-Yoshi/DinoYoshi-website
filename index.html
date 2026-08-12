@@ -7,6 +7,10 @@
   <title>
     Darien Chau - Portfolio
   </title>
+  <!-- Inter for body/UI text; the custom display font is reserved for the wordmark and hero name only. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Link to external stylesheet for all page styles. See style.css for font, layout, and animation details. -->
   <link rel="stylesheet" href="style.css">
   <!-- Enables EmailJS usage -->
@@ -15,42 +19,69 @@
   </script>
 </head>
 <body>
+
+  <!-- Site Navigation -->
+  <header id="site-nav">
+    <div class="nav-inner">
+      <a href="#about-me" class="nav-brand">Darien Chau</a>
+      <button id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="nav-links">
+        <a href="#about-me" data-nav="about-me">About</a>
+        <a href="#projects-and-experience" data-nav="projects-and-experience">Projects</a>
+        <a href="#contacts" data-nav="contacts">Contact</a>
+      </nav>
+    </div>
+  </header>
+
   <main>
 
   <section id="about-me">
-    <h1>My Portfolio</h1>
+    <p class="eyebrow">About Me</p>
 
-  <div class="typing">
-    <span id="typed"></span><span class="caret">
-       <!-- This div displays my name with a typing animation and blinking caret. The text is typed out by main.js, and the caret blinks via CSS. -->
-    </span>
-  </div>
+    <div class="typing">
+      <span id="typed"></span><span class="caret">
+         <!-- This div displays my name with a typing animation and blinking caret. The text is typed out by main.js, and the caret blinks via CSS. -->
+      </span>
+    </div>
 
-  <!-- Logic Script -->
-  <script src="main.js" defer></script>
+    <!-- Logic Script -->
+    <script src="main.js?v=cf4c3e3" defer></script>
 
-  <div class="about-me-content">
-    <img src="./images/darien.png" alt="Darien Chau Headshot" class="profile-picture">
+    <div class="about-me-content">
+      <img src="./images/darien.png" alt="Darien Chau Headshot" class="profile-picture">
 
-    <!-- About Me Section -->
-    <p>
-      Hello! I'm Darien, a Computer Science student at Cal State East Bay with a 4.0 GPA, graduating in May 2027.
-      I presently work on campus as a Learning Assistant where I help supplement student learning, coach their study habits, and run small support sessions before major assessments.
-      Prior, I tutored 4th-6th grade math one-on-one, which influenced my eventual mastery of patience and communication.
-      I learn programming best through a hands-on approach. For example, early on in my career, I helped prototype a simple cipher helper using the Perplexity API at Hack Hayward. 
-      Additionally, I built a React + Nginx address book app with account registration, login, cookies, and full client-side flow. 
-      My skills and experience then culminated into my most recent accomplishment at MESA U Hacks, where my team earned 2nd Best Pitch for NimbusNotes. 
-      Currently, I have a skillset of Python, C++, React, Linux, and Git, and am actively learning ML and SQL.
-      Overall, my most ambitious goal is to lead the ongoing development towards AGI, as I believe it has the potential to revolutionize humanity for the better.
-    
-    </p>
-  </div>
+      <!-- About Me Section -->
+      <div class="about-text">
+        <p>
+          Hello! I'm Darien, a Computer Science student at Cal State East Bay with a 4.0 GPA, graduating in May 2027.
+          I presently work on campus as a Learning Assistant where I help supplement student learning, coach their study habits, and run small support sessions before major assessments.
+          Prior, I tutored 4th-6th grade math one-on-one, which influenced my eventual mastery of patience and communication.
+          I learn programming best through a hands-on approach. For example, early on in my career, I helped prototype a simple cipher helper using the Perplexity API at Hack Hayward.
+          Additionally, I built a React + Nginx address book app with account registration, login, cookies, and full client-side flow.
+          My skills and experience then culminated into my most recent accomplishment at MESA U Hacks, where my team earned 2nd Best Pitch for NimbusNotes.
+          Currently, I have a skillset of Python, C++, React, Linux, and Git, and am actively learning ML and SQL.
+          Overall, my most ambitious goal is to lead the ongoing development towards AGI, as I believe it has the potential to revolutionize humanity for the better.
+        </p>
+        <ul class="skill-tags">
+          <li>Python</li>
+          <li>C++</li>
+          <li>React</li>
+          <li>Linux</li>
+          <li>Git</li>
+          <li>Machine Learning</li>
+          <li>SQL</li>
+        </ul>
+      </div>
+    </div>
   </section>
 
   <!-- Class for Project Carousel Display -->
   <section id="projects-and-experience">
-    <h1>Projects and Experience</h1>
-    <h3>Click on a Project to learn more!</h3>
+    <p class="eyebrow">Portfolio</p>
+    <h1>Projects &amp; Experience</h1>
+    <h3>Click on a project to learn more</h3>
 
   <div class="projects-container">
     <div class="projects-carousel">
@@ -86,8 +117,8 @@
     -->
     </div>
     <div class="carousel-buttons">
-      <button id="prev-button">&lt;</button>
-      <button id="next-button">&gt;</button>
+      <button id="prev-button" aria-label="Previous project">&lt;</button>
+      <button id="next-button" aria-label="Next project">&gt;</button>
     </div>
   </div>
 
@@ -100,16 +131,17 @@
     </div>
   </div>
   </section>
-  
+
   <!-- Class for Contact Platforms -->
   <section id="contacts">
+    <p class="eyebrow">Get In Touch</p>
     <h2>Contact Me</h2>
 
   <div class="contact-content">
     <div class="contact-links">
       <a href="https://github.com/Dino-Yoshi" class="contact-button">
         <img src="./images/github.png" alt="GitHub Logo" class="contact-image">
-        <span>Github</span>
+        <span>GitHub</span>
       </a>
       <a href="https://www.linkedin.com/in/darien-chau/" class="contact-button">
         <img src="./images/linkedin.png" alt="LinkedIn Logo" class="contact-image">
@@ -141,10 +173,15 @@
           <label for="message">Message</label>
           <textarea id="message" name="message" required></textarea>
         </div>
-        <button type="submit">Send</button>
+        <button type="submit">Send Message</button>
       </form>
     </div>
   </div>
   </section>
+
+  <footer id="site-footer">
+    <p>&copy; <span id="year"></span> Darien Chau. Built from scratch.</p>
+  </footer>
   </main>
 </body>
+</html>
