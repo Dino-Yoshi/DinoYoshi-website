@@ -21,8 +21,44 @@ function type() {
 
 type();
 
-// Carousel and modal logic
+// Carousel, modal, nav, and contact form logic
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Site Nav --- //
+    const navToggle = document.getElementById('nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    const navLinkEls = Array.from(document.querySelectorAll('#nav-links a'));
+
+    navToggle.addEventListener('click', () => {
+        const isOpen = navLinks.classList.toggle('open');
+        navToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    navLinkEls.forEach((link) => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+        });
+    });
+
+    const navSections = navLinkEls
+        .map((link) => document.getElementById(link.dataset.nav))
+        .filter(Boolean);
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            navLinkEls.forEach((link) => {
+                link.classList.toggle('active', link.dataset.nav === entry.target.id);
+            });
+        });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+
+    navSections.forEach((section) => sectionObserver.observe(section));
+
+    // --- Footer year --- //
+    const yearEl = document.getElementById('year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
     // --- Project Carousel & Modal --- //
 
     // 1. Initialization
@@ -37,7 +73,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let projects = Array.from(document.querySelectorAll('.project-item'));
     const projectCount = projects.length;
     let isTransitioning = false;
-    let currentProject = 1; // Start at the first real project (not the clone)
+    // How many items are cloned onto each end of the track. 1 isn't enough: while resting on
+    // that single clone mid-wrap, the far neighbor slot (3 items are visible at once) has
+    // nothing to show, which pops in abruptly once the loop snaps. A 2nd clone on each side
+    // fills that neighbor slot so every resting frame during the wrap is fully populated.
+    const CLONE_COUNT = 2;
+    let currentProject = CLONE_COUNT; // Start at the first real project (not a clone)
 
     const projectDetails = [
         { title: 'BattleBoxAI', link: 'https://github.com/Dino-Yoshi/PPO-RL-Model', description: 'In the month of January 2026, I designed BattleBoxAI, a reinforcement learning project that was tasked with creating an agent that was capable of taking input (bullet positions) and outputting actions (movement). Through existing technologies and tools, specifically Stable-Baselines3 and TensorBoard, I refined my model through PPO, or Proximal Policy Optimization. The end result was an average score of 476 out of 1000 based on survival duration over the course of 10 episodes.' },
@@ -49,21 +90,27 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     // 2. Carousel Setup (Infinite Loop)
-    // Clone the first and last projects to create a seamless loop.
-    // The carousel will now have a structure like: [last-clone, 0, 1, 2, 3, 0-clone]
-    const firstClone = projects[0].cloneNode(true);
-    const lastClone = projects[projectCount - 1].cloneNode(true);
-    carousel.appendChild(firstClone);
-    carousel.insertBefore(lastClone, projects[0]);
+    // Clone the last CLONE_COUNT projects onto the front and the first CLONE_COUNT onto the
+    // back, so the structure looks like: [clone(n-2), clone(n-1), 0, 1, ..., n-1, clone(0), clone(1)]
+    for (let i = 0; i < CLONE_COUNT; i++) {
+        const endClone = projects[projectCount - 1 - i].cloneNode(true);
+        carousel.insertBefore(endClone, carousel.firstChild);
+    }
+    for (let i = 0; i < CLONE_COUNT; i++) {
+        const startClone = projects[i].cloneNode(true);
+        carousel.appendChild(startClone);
+    }
     projects = Array.from(document.querySelectorAll('.project-item'));
 
     // 3. Carousel Logic
     function updateCarousel(withTransition = true) {
         carousel.style.transition = withTransition ? 'transform 0.5s ease' : 'none';
-        
+
         // Position the carousel to center the active project.
-        // We divide the container width by 3 to get the width of a single project.
-        const projectWidth = carousel.offsetWidth / 3;
+        // Use layout width (offsetWidth), not getBoundingClientRect, since active/inactive
+        // items are scaled via CSS transform and a transformed item's rendered width would
+        // throw the offset off depending on which item happens to be read.
+        const projectWidth = projects[0].offsetWidth;
         const offset = -(currentProject - 1) * projectWidth;
         carousel.style.transform = `translateX(${offset}px)`;
 
@@ -84,14 +131,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // This event listener creates the seamless loop.
-    // When the carousel finishes transitioning to a clone, it instantly jumps to the real project.
+    // When the carousel finishes transitioning to rest on the clone immediately adjacent to
+    // the real range (which still has a fully populated neighbor slot thanks to the buffer
+    // clone beyond it), it instantly jumps to the equivalent real project.
     carousel.addEventListener('transitionend', () => {
         isTransitioning = false;
-        if (currentProject === 0) { // If at the last clone
-            currentProject = projectCount; // Jump to the real last project
+        if (currentProject === CLONE_COUNT - 1) { // Resting on the clone just before the real range
+            currentProject = CLONE_COUNT + projectCount - 1; // Jump to the real last project
             updateCarousel(false);
-        } else if (currentProject === projectCount + 1) { // If at the first clone
-            currentProject = 1; // Jump to the real first project
+        } else if (currentProject === CLONE_COUNT + projectCount) { // Resting on the clone just after the real range
+            currentProject = CLONE_COUNT; // Jump to the real first project
             updateCarousel(false);
         }
     });
@@ -124,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (project) {
             // Calculate the original index of the project from the projectDetails array.
             // This is necessary because the 'currentProject' index includes the clones.
-            let originalIndex = (currentProject - 1 + projectCount) % projectCount;
+            let originalIndex = (currentProject - CLONE_COUNT + projectCount) % projectCount;
             openModal(originalIndex);
         }
     });
@@ -137,6 +186,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial setup
     updateCarousel(false);
+
+    // Recompute the transform offset on resize (item width changes across breakpoints).
+    window.addEventListener('resize', () => updateCarousel(false));
 
     // --- Contact Form --- //
     const contactForm = document.getElementById('contact-form');
