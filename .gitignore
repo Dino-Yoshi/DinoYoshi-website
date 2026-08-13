@@ -1,2 +1,7 @@
 .agent-pipeline/
 node_modules/
+
+# Unused assets kept locally but not published to the site
+images/darien.jpg
+images/SSR_TSRPT.pdf
+images/sketchWeb.png
