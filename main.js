@@ -70,90 +70,139 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalDescription = document.getElementById('modal-description');
     const closeButton = document.querySelector('.close-button');
 
-    let projects = Array.from(document.querySelectorAll('.project-item'));
-    const projectCount = projects.length;
+    const PROJECTS_PER_PAGE = 6;
+    const PLACEHOLDER_DESCRIPTION = 'Project details coming soon — check back for a full write-up of this build.';
+
     let isTransitioning = false;
-    // How many items are cloned onto each end of the track. 1 isn't enough: while resting on
-    // that single clone mid-wrap, the far neighbor slot (3 items are visible at once) has
-    // nothing to show, which pops in abruptly once the loop snaps. A 2nd clone on each side
-    // fills that neighbor slot so every resting frame during the wrap is fully populated.
-    const CLONE_COUNT = 2;
-    let currentProject = CLONE_COUNT; // Start at the first real project (not a clone)
+    let currentPage = 0;
 
     const projectDetails = [
-        { title: 'BattleBoxAI', link: 'https://github.com/Dino-Yoshi/PPO-RL-Model', description: 'In the month of January 2026, I designed BattleBoxAI, a reinforcement learning project that was tasked with creating an agent that was capable of taking input (bullet positions) and outputting actions (movement). Through existing technologies and tools, specifically Stable-Baselines3 and TensorBoard, I refined my model through PPO, or Proximal Policy Optimization. The end result was an average score of 476 out of 1000 based on survival duration over the course of 10 episodes.' },
-        { title: 'DogCheck', link: 'https://colab.research.google.com/drive/181N1rNfrWUJV3g9JaynXLc1GGnDk0kI_?usp=sharing', description: 'Between November and December 2025, I developed DogCheck, a machine learning project aimed at identifying dog groups or roles from a rigorously labeled dataset comprised of over 250+ breeds. Utilizing fundamental libraries such as Pandas and NumPy for data handling alongside scikit-learn for model development, I trained a gradient boosting classifier (XGBClassifier) that achieved an accuracy of 79% on unseen data. Mainly, most of my time was spent on data preprocessing and feature engineering more than anything else.'},
-        { title: 'MESA U HACKS 2.0', link: 'https://github.com/Jdeww/Mesa-U-Hacks-2.0', description: 'At MESA U Hacks 2.0 in September 2025, I participated on a team building a study tool called NimbusNotes. I developed the backend and API in Python/FastAPI, integrating AWS services and the model with the front end. The app accepted file and image uploads; GPT-4.1 Mini converted the content into flashcards and quizzes for solo review or group competition. Our team won the 2nd Best Pitch category.'},
-        { title: 'Learning Assistant', link: 'https://www.csueastbay.edu/stemlab/', description: 'At California State University, East Bay, I currently serve as a Learning Assistant for Python coursework or queries supporting 20+ students. I have collaborated with TAs to guide the development of assignments, coach students on study habits and how to use campus resources. Further, I lead 5-6 small-group support sessions before major assessments per semester. This work has sharpened how I both understand and explain concepts and structure practice so students can approach problems step by step and solve independently.' },
-        { title: 'Hack Hayward', link: 'https://gdg.community.dev/events/details/google-gdg-on-campus-california-state-university-east-bay-hayward-united-states-presents-build-with-ai-hackhayward/', description: 'I participated in Hack Hayward 2025 in Hayward, CA. Our team built a small tool that used the Perplexity API and AI to encrypt and decrypt simple ciphers, like a Caesar cipher. I contributed through workshops and teamwork to move the cipher tool forward.' },
-        { title: 'Student Tutor', link: 'https://www.stepuptutoring.org/', description: 'At Step Up Tutoring from Oct 2023-May 2024, I served as a 4th-6th Grade Math Tutor. I guided students through core math concepts in one-on-one hourly sessions and built strong relationships over seven months, collaborating with staff and colleagues to support each student.' }
+        { title: 'Reinforcement Learning - BattleBoxAI', modalTitle: 'BattleBoxAI', link: 'https://github.com/Dino-Yoshi/PPO-RL-Model', description: 'In the month of January 2026, I designed BattleBoxAI, a reinforcement learning project that was tasked with creating an agent that was capable of taking input (bullet positions) and outputting actions (movement). Through existing technologies and tools, specifically Stable-Baselines3 and TensorBoard, I refined my model through PPO, or Proximal Policy Optimization. The end result was an average score of 476 out of 1000 based on survival duration over the course of 10 episodes.', image: './images/battleboxai.jpg', imageAlt: 'BattleBoxAI' },
+        { title: 'Machine Learning - DogCheck', modalTitle: 'DogCheck', link: 'https://colab.research.google.com/drive/181N1rNfrWUJV3g9JaynXLc1GGnDk0kI_?usp=sharing', description: 'Between November and December 2025, I developed DogCheck, a machine learning project aimed at identifying dog groups or roles from a rigorously labeled dataset comprised of over 250+ breeds. Utilizing fundamental libraries such as Pandas and NumPy for data handling alongside scikit-learn for model development, I trained a gradient boosting classifier (XGBClassifier) that achieved an accuracy of 79% on unseen data. Mainly, most of my time was spent on data preprocessing and feature engineering more than anything else.', image: './images/dogCheck.jpg', imageAlt: 'DogCheck'},
+        { title: 'MESA U HACKS 2025 - 2nd Best Pitch', modalTitle: 'MESA U HACKS 2.0', link: 'https://github.com/Jdeww/Mesa-U-Hacks-2.0', description: 'At MESA U Hacks 2.0 in September 2025, I participated on a team building a study tool called NimbusNotes. I developed the backend and API in Python/FastAPI, integrating AWS services and the model with the front end. The app accepted file and image uploads; GPT-4.1 Mini converted the content into flashcards and quizzes for solo review or group competition. Our team won the 2nd Best Pitch category.', image: './images/mesalogo.png', imageAlt: 'Logo for MESA U HACKS 2025'},
+        { title: 'Learning Assistant - California State University, East Bay', modalTitle: 'Learning Assistant', link: 'https://www.csueastbay.edu/stemlab/', description: 'At California State University, East Bay, I currently serve as a Learning Assistant for Python coursework or queries supporting 20+ students. I have collaborated with TAs to guide the development of assignments, coach students on study habits and how to use campus resources. Further, I lead 5-6 small-group support sessions before major assessments per semester. This work has sharpened how I both understand and explain concepts and structure practice so students can approach problems step by step and solve independently.', image: './images/stemlogo.jpeg', imageAlt: 'Logo for the STEM LAB at CSUEB.' },
+        { title: 'Hack Hayward 2025', modalTitle: 'Hack Hayward', link: 'https://gdg.community.dev/events/details/google-gdg-on-campus-california-state-university-east-bay-hayward-united-states-presents-build-with-ai-hackhayward/', description: 'I participated in Hack Hayward 2025 in Hayward, CA. Our team built a small tool that used the Perplexity API and AI to encrypt and decrypt simple ciphers, like a Caesar cipher. I contributed through workshops and teamwork to move the cipher tool forward.', image: './images/hackhaywardlogo.jpg', imageAlt: 'Logo for Hack Hayward 2025' },
+        { title: 'Student Tutor - Step Up Tutoring', modalTitle: 'Student Tutor', link: 'https://www.stepuptutoring.org/', description: 'At Step Up Tutoring from Oct 2023-May 2024, I served as a 4th-6th Grade Math Tutor. I guided students through core math concepts in one-on-one hourly sessions and built strong relationships over seven months, collaborating with staff and colleagues to support each student.', image: './images/stepuptutoringlogo.jpg', imageAlt: 'Logo for Step Up Tutoring' },
+        { title: 'Immersive Enchanting', description: PLACEHOLDER_DESCRIPTION },
+        { title: 'Catenna', description: PLACEHOLDER_DESCRIPTION },
+        { title: 'Minecraft Mod Development', description: PLACEHOLDER_DESCRIPTION }
     ];
+    const totalPages = Math.ceil(projectDetails.length / PROJECTS_PER_PAGE);
+    let pages = [];
 
-    // 2. Carousel Setup (Infinite Loop)
-    // Clone the last CLONE_COUNT projects onto the front and the first CLONE_COUNT onto the
-    // back, so the structure looks like: [clone(n-2), clone(n-1), 0, 1, ..., n-1, clone(0), clone(1)]
-    for (let i = 0; i < CLONE_COUNT; i++) {
-        const endClone = projects[projectCount - 1 - i].cloneNode(true);
-        carousel.insertBefore(endClone, carousel.firstChild);
-    }
-    for (let i = 0; i < CLONE_COUNT; i++) {
-        const startClone = projects[i].cloneNode(true);
-        carousel.appendChild(startClone);
-    }
-    projects = Array.from(document.querySelectorAll('.project-item'));
+    function createProjectTile(project, index) {
+        const tile = document.createElement('button');
+        tile.className = 'project-item';
+        tile.type = 'button';
+        tile.dataset.projectIndex = String(index);
 
-    // 3. Carousel Logic
-    function updateCarousel(withTransition = true) {
-        carousel.style.transition = withTransition ? 'transform 0.5s ease' : 'none';
+        const media = document.createElement('span');
+        media.className = 'project-media';
 
-        // Position the carousel to center the active project.
-        // Use layout width (offsetWidth), not getBoundingClientRect, since active/inactive
-        // items are scaled via CSS transform and a transformed item's rendered width would
-        // throw the offset off depending on which item happens to be read.
-        const projectWidth = projects[0].offsetWidth;
-        const offset = -(currentProject - 1) * projectWidth;
-        carousel.style.transform = `translateX(${offset}px)`;
-
-        // Update the 'active' class for styling.
-        projects.forEach((project, i) => {
-            project.classList.remove('active');
-            if (i === currentProject) {
-                project.classList.add('active');
-            }
-        });
-    }
-
-    function shiftProjects(direction) {
-        if (isTransitioning) return;
-        isTransitioning = true;
-        currentProject += direction;
-        updateCarousel();
-    }
-
-    // This event listener creates the seamless loop.
-    // When the carousel finishes transitioning to rest on the clone immediately adjacent to
-    // the real range (which still has a fully populated neighbor slot thanks to the buffer
-    // clone beyond it), it instantly jumps to the equivalent real project.
-    carousel.addEventListener('transitionend', () => {
-        isTransitioning = false;
-        if (currentProject === CLONE_COUNT - 1) { // Resting on the clone just before the real range
-            currentProject = CLONE_COUNT + projectCount - 1; // Jump to the real last project
-            updateCarousel(false);
-        } else if (currentProject === CLONE_COUNT + projectCount) { // Resting on the clone just after the real range
-            currentProject = CLONE_COUNT; // Jump to the real first project
-            updateCarousel(false);
+        if (project.image) {
+            const image = document.createElement('img');
+            image.src = project.image;
+            image.alt = project.imageAlt;
+            image.className = 'project-image';
+            media.appendChild(image);
+        } else {
+            const placeholder = document.createElement('span');
+            placeholder.className = 'project-placeholder';
+            placeholder.setAttribute('aria-hidden', 'true');
+            placeholder.textContent = project.title.slice(0, 1);
+            media.appendChild(placeholder);
         }
+
+        const title = document.createElement('p');
+        title.textContent = project.title;
+
+        tile.append(media, title);
+        return tile;
+    }
+
+    function createPage(pageIndex) {
+        const page = document.createElement('div');
+        page.className = 'project-page';
+        page.dataset.pageIndex = String(pageIndex);
+
+        const start = pageIndex * PROJECTS_PER_PAGE;
+        projectDetails.slice(start, start + PROJECTS_PER_PAGE).forEach((project, offset) => {
+            page.appendChild(createProjectTile(project, start + offset));
+        });
+
+        return page;
+    }
+
+    function renderPages() {
+        carousel.replaceChildren();
+        pages = Array.from({ length: totalPages }, (_, index) => createPage(index));
+        pages.forEach((page) => carousel.appendChild(page));
+    }
+
+    function setTrackPosition(pageIndex, withTransition = true) {
+        carousel.style.transition = withTransition ? 'transform 0.5s ease' : 'none';
+        carousel.style.transform = `translateX(-${pageIndex * 100}%)`;
+    }
+
+    function goToPage(direction) {
+        if (isTransitioning) return;
+
+        const nextPage = (currentPage + direction + totalPages) % totalPages;
+        if (nextPage === currentPage) return;
+
+        const isForwardWrap = currentPage === totalPages - 1 && nextPage === 0 && direction > 0;
+        const isBackwardWrap = currentPage === 0 && nextPage === totalPages - 1 && direction < 0;
+
+        isTransitioning = true;
+
+        if (isForwardWrap || isBackwardWrap) {
+            const destinationPage = createPage(nextPage);
+            destinationPage.classList.add('project-page--seam');
+
+            if (isForwardWrap) {
+                carousel.appendChild(destinationPage);
+                carousel.style.transition = 'none';
+                carousel.style.transform = `translateX(-${currentPage * 100}%)`;
+                carousel.offsetHeight;
+                carousel.style.transition = 'transform 0.5s ease';
+                carousel.style.transform = `translateX(-${totalPages * 100}%)`;
+            } else {
+                carousel.insertBefore(destinationPage, carousel.firstChild);
+                carousel.style.transition = 'none';
+                carousel.style.transform = 'translateX(-100%)';
+                carousel.offsetHeight;
+                carousel.style.transition = 'transform 0.5s ease';
+                carousel.style.transform = 'translateX(0)';
+            }
+        } else {
+            setTrackPosition(nextPage);
+        }
+
+        currentPage = nextPage;
+    }
+
+    carousel.addEventListener('transitionend', (event) => {
+        if (event.target !== carousel || event.propertyName !== 'transform') return;
+        isTransitioning = false;
+        renderPages();
+        setTrackPosition(currentPage, false);
     });
 
-    // 4. Modal Logic
     function openModal(index) {
         // If a link is provided for the project, render the title as an embedded anchor
         // so users can click it from inside the modal. Otherwise, render plain text.
         const proj = projectDetails[index];
         if (proj.link) {
-            modalTitle.innerHTML = `<a href="${proj.link}" target="_blank" rel="noopener noreferrer">${proj.title}</a>`;
+            modalTitle.replaceChildren();
+            const link = document.createElement('a');
+            link.href = proj.link;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.textContent = proj.modalTitle ?? proj.title;
+            modalTitle.appendChild(link);
         } else {
-            modalTitle.textContent = proj.title;
+            modalTitle.replaceChildren();
+            modalTitle.textContent = proj.modalTitle ?? proj.title;
         }
         modalDescription.textContent = projectDetails[index].description;
         modal.classList.add('active');
@@ -163,18 +212,14 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.remove('active');
     }
 
-    // 5. Event Listeners
-    prevButton.addEventListener('click', () => shiftProjects(-1));
-    nextButton.addEventListener('click', () => shiftProjects(1));
+    prevButton.addEventListener('click', () => goToPage(-1));
+    nextButton.addEventListener('click', () => goToPage(1));
     closeButton.addEventListener('click', closeModal);
 
     carousel.addEventListener('click', (event) => {
-        const project = event.target.closest('.project-item.active');
+        const project = event.target.closest('.project-item');
         if (project) {
-            // Calculate the original index of the project from the projectDetails array.
-            // This is necessary because the 'currentProject' index includes the clones.
-            let originalIndex = (currentProject - CLONE_COUNT + projectCount) % projectCount;
-            openModal(originalIndex);
+            openModal(Number(project.dataset.projectIndex));
         }
     });
 
@@ -184,11 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Initial setup
-    updateCarousel(false);
-
-    // Recompute the transform offset on resize (item width changes across breakpoints).
-    window.addEventListener('resize', () => updateCarousel(false));
+    renderPages();
+    setTrackPosition(currentPage, false);
 
     // --- Contact Form --- //
     const contactForm = document.getElementById('contact-form');
