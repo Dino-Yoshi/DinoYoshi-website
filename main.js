@@ -21,8 +21,456 @@ function type() {
 
 type();
 
+// Animated constellation canvas background
+function initConstellationBackground() {
+    try {
+        const canvas = document.getElementById('constellation-background');
+        if (!canvas || typeof canvas.getContext !== 'function') return;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        const hasAnimationFrame = typeof window.requestAnimationFrame === 'function';
+        const canCancelAnimationFrame = typeof window.cancelAnimationFrame === 'function';
+        const motionQuery = typeof window.matchMedia === 'function'
+            ? window.matchMedia('(prefers-reduced-motion: reduce)')
+            : null;
+
+        const CONSTELLATION_LINE_INTERVAL = 380;
+        const AMBIENT_PULSE_INTERVAL = 450;
+        const PULSE_DURATION = 1000;
+        const GLOW_DURATION = 1600;
+        const ROTATION_RADIANS_PER_MS = (0.0006 * 60) / 1000;
+        const LINE_OPACITY = 0.22;
+        const DPR_CAP = 2;
+
+        const colorFallbacks = {
+            accent: '#35c2b5',
+            accentStrong: '#58d9cd'
+        };
+
+        const constellations = [
+            {
+                name: 'Ursa Major',
+                origin: { x: 0.18, y: 0.23 },
+                scale: 0.25,
+                rotation: -0.25,
+                stars: [
+                    [0.10, 0.52], [0.24, 0.38], [0.42, 0.32], [0.56, 0.42],
+                    [0.68, 0.58], [0.84, 0.62], [0.96, 0.48]
+                ],
+                lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]]
+            },
+            {
+                name: 'Orion',
+                origin: { x: 0.68, y: 0.28 },
+                scale: 0.29,
+                rotation: 0.18,
+                stars: [
+                    [0.24, 0.08], [0.74, 0.12], [0.38, 0.42], [0.52, 0.46],
+                    [0.66, 0.50], [0.20, 0.90], [0.76, 0.88]
+                ],
+                lines: [[0, 2], [1, 4], [2, 3], [3, 4], [2, 5], [4, 6], [0, 1], [5, 6]]
+            },
+            {
+                name: 'Cassiopeia',
+                origin: { x: 0.40, y: 0.18 },
+                scale: 0.20,
+                rotation: 0.06,
+                stars: [
+                    [0.05, 0.25], [0.28, 0.68], [0.50, 0.18], [0.72, 0.62], [0.95, 0.30]
+                ],
+                lines: [[0, 1], [1, 2], [2, 3], [3, 4]]
+            },
+            {
+                name: 'Cygnus',
+                origin: { x: 0.30, y: 0.68 },
+                scale: 0.27,
+                rotation: -0.08,
+                stars: [
+                    [0.50, 0.02], [0.50, 0.24], [0.50, 0.48], [0.50, 0.72],
+                    [0.50, 0.96], [0.18, 0.46], [0.82, 0.48]
+                ],
+                lines: [[0, 1], [1, 2], [2, 3], [3, 4], [5, 2], [2, 6]]
+            },
+            {
+                name: 'Lyra',
+                origin: { x: 0.75, y: 0.72 },
+                scale: 0.18,
+                rotation: 0.28,
+                stars: [
+                    [0.10, 0.02], [0.38, 0.42], [0.72, 0.36], [0.90, 0.70], [0.52, 0.78]
+                ],
+                lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 1]]
+            }
+        ];
+
+        let width = 0;
+        let height = 0;
+        let minSide = 0;
+        let backdropStars = [];
+        let ambientStars = [];
+        let constellationPulses = [];
+        let ambientPulses = [];
+        let starGlows = new Map();
+        let animationFrame = null;
+        let startTime = 0;
+        let lastTime = 0;
+        let lastConstellationPulse = 0;
+        let lastAmbientPulse = 0;
+
+        function cssColor(name, fallback) {
+            const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+            return value || fallback;
+        }
+
+        function withAlpha(color, alpha) {
+            if (color.startsWith('#') && (color.length === 7 || color.length === 4)) {
+                const hex = color.length === 4
+                    ? color.slice(1).split('').map((digit) => digit + digit).join('')
+                    : color.slice(1);
+                const red = parseInt(hex.slice(0, 2), 16);
+                const green = parseInt(hex.slice(2, 4), 16);
+                const blue = parseInt(hex.slice(4, 6), 16);
+                return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+            }
+            return color;
+        }
+
+        function randomBetween(min, max) {
+            return min + Math.random() * (max - min);
+        }
+
+        function resizeCanvas() {
+            width = window.innerWidth || document.documentElement.clientWidth || 1;
+            height = window.innerHeight || document.documentElement.clientHeight || 1;
+            minSide = Math.max(1, Math.min(width, height));
+
+            const dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP);
+            canvas.width = Math.max(1, Math.round(width * dpr));
+            canvas.height = Math.max(1, Math.round(height * dpr));
+            canvas.style.width = `${width}px`;
+            canvas.style.height = `${height}px`;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+            const area = width * height;
+            const backdropCount = Math.max(24, Math.round(area / 12000));
+            const ambientCount = Math.max(8, Math.round(area / 20000));
+
+            backdropStars = Array.from({ length: backdropCount }, () => ({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: randomBetween(0.45, 1.15),
+                opacity: randomBetween(0.14, 0.42),
+                phase: randomBetween(0, Math.PI * 2),
+                speed: randomBetween(0.0006, 0.0014)
+            }));
+
+            ambientStars = Array.from({ length: ambientCount }, () => {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = randomBetween(0.035, 0.075);
+                return {
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    radius: randomBetween(1, 1.8)
+                };
+            });
+
+            constellationPulses = [];
+            ambientPulses = [];
+            starGlows = new Map();
+        }
+
+        function rotatePoint(x, y, centerX, centerY, angle) {
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+            const dx = x - centerX;
+            const dy = y - centerY;
+            return {
+                x: centerX + dx * cos - dy * sin,
+                y: centerY + dx * sin + dy * cos
+            };
+        }
+
+        function constellationPositions(rotationAngle) {
+            const centerX = width / 2;
+            const centerY = height / 2;
+
+            return constellations.map((constellation) => {
+                const size = minSide * constellation.scale;
+                const localCenterX = constellation.origin.x * width;
+                const localCenterY = constellation.origin.y * height;
+                const localCos = Math.cos(constellation.rotation);
+                const localSin = Math.sin(constellation.rotation);
+                const stars = constellation.stars.map(([x, y], index) => {
+                    const localX = (x - 0.5) * size;
+                    const localY = (y - 0.5) * size;
+                    return {
+                        index,
+                        x: localCenterX + localX * localCos - localY * localSin,
+                        y: localCenterY + localX * localSin + localY * localCos
+                    };
+                }).map((star) => ({
+                    ...star,
+                    ...rotatePoint(star.x, star.y, centerX, centerY, rotationAngle)
+                }));
+
+                return { ...constellation, stars };
+            });
+        }
+
+        function allNamedStars(positionedConstellations) {
+            return positionedConstellations.flatMap((constellation, constellationIndex) =>
+                constellation.stars.map((star) => ({ ...star, constellationIndex }))
+            );
+        }
+
+        function drawCircle(x, y, radius, fillStyle) {
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = fillStyle;
+            ctx.fill();
+        }
+
+        function drawLine(from, to, strokeStyle, lineWidth) {
+            ctx.beginPath();
+            ctx.moveTo(from.x, from.y);
+            ctx.lineTo(to.x, to.y);
+            ctx.strokeStyle = strokeStyle;
+            ctx.lineWidth = lineWidth;
+            ctx.stroke();
+        }
+
+        function spawnConstellationPulse(now) {
+            const constellationIndex = Math.floor(Math.random() * constellations.length);
+            const constellation = constellations[constellationIndex];
+            const lineIndex = Math.floor(Math.random() * constellation.lines.length);
+            constellationPulses.push({ constellationIndex, lineIndex, start: now });
+        }
+
+        function spawnAmbientPulse(now, positionedConstellations) {
+            if (!ambientStars.length) return;
+            const namedStars = allNamedStars(positionedConstellations);
+            if (!namedStars.length) return;
+            ambientPulses.push({
+                ambientIndex: Math.floor(Math.random() * ambientStars.length),
+                star: namedStars[Math.floor(Math.random() * namedStars.length)],
+                start: now
+            });
+        }
+
+        function drawBackdrop(now) {
+            backdropStars.forEach((star) => {
+                const twinkle = Math.sin(now * star.speed + star.phase) * 0.10;
+                drawCircle(star.x, star.y, star.radius, `rgba(234, 240, 250, ${Math.max(0.06, star.opacity + twinkle)})`);
+            });
+        }
+
+        function drawProximityLinks(namedStars, accent) {
+            const threshold = minSide * 0.14;
+            const nodes = ambientStars.concat(namedStars.map((star) => ({
+                x: star.x,
+                y: star.y,
+                radius: 1.4,
+                named: true
+            })));
+
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    if (nodes[i].named && nodes[j].named) continue;
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const distance = Math.hypot(dx, dy);
+                    if (distance > threshold) continue;
+                    const opacity = (1 - distance / threshold) * 0.18;
+                    drawLine(nodes[i], nodes[j], withAlpha(accent, opacity), 0.7);
+                }
+            }
+        }
+
+        function updateAmbientStars(delta, reducedMotion) {
+            if (reducedMotion) return;
+            ambientStars.forEach((star) => {
+                star.x += star.vx * delta;
+                star.y += star.vy * delta;
+
+                if (star.x < 0 || star.x > width) {
+                    star.vx *= -1;
+                    star.x = Math.max(0, Math.min(width, star.x));
+                }
+                if (star.y < 0 || star.y > height) {
+                    star.vy *= -1;
+                    star.y = Math.max(0, Math.min(height, star.y));
+                }
+            });
+        }
+
+        function drawConstellations(positionedConstellations, now, accent, accentStrong) {
+            positionedConstellations.forEach((constellation, constellationIndex) => {
+                constellation.lines.forEach(([fromIndex, toIndex]) => {
+                    drawLine(
+                        constellation.stars[fromIndex],
+                        constellation.stars[toIndex],
+                        withAlpha(accent, LINE_OPACITY),
+                        0.85
+                    );
+                });
+
+                constellation.stars.forEach((star) => {
+                    const glowKey = `${constellationIndex}:${star.index}`;
+                    const glowStart = starGlows.get(glowKey);
+                    const glowProgress = glowStart ? Math.min(1, (now - glowStart) / GLOW_DURATION) : 1;
+                    const glow = glowStart ? (1 - glowProgress) : 0;
+                    if (glowStart && glowProgress >= 1) starGlows.delete(glowKey);
+
+                    if (glow > 0) {
+                        drawCircle(star.x, star.y, 7 * glow + 2, withAlpha(accentStrong, 0.18 * glow));
+                    }
+                    drawCircle(star.x, star.y, 1.7 + glow * 0.7, withAlpha(accentStrong, 0.58 + glow * 0.38));
+                });
+            });
+        }
+
+        function drawPulses(positionedConstellations, now, accentStrong) {
+            constellationPulses = constellationPulses.filter((pulse) => {
+                const progress = (now - pulse.start) / PULSE_DURATION;
+                if (progress >= 1) {
+                    const line = constellations[pulse.constellationIndex].lines[pulse.lineIndex];
+                    starGlows.set(`${pulse.constellationIndex}:${line[1]}`, now);
+                    return false;
+                }
+                if (progress < 0) return true;
+
+                const line = positionedConstellations[pulse.constellationIndex].lines[pulse.lineIndex];
+                const from = positionedConstellations[pulse.constellationIndex].stars[line[0]];
+                const to = positionedConstellations[pulse.constellationIndex].stars[line[1]];
+                drawCircle(
+                    from.x + (to.x - from.x) * progress,
+                    from.y + (to.y - from.y) * progress,
+                    2.4,
+                    withAlpha(accentStrong, 0.85)
+                );
+                return true;
+            });
+
+            ambientPulses = ambientPulses.filter((pulse) => {
+                const progress = (now - pulse.start) / PULSE_DURATION;
+                if (progress >= 1) {
+                    starGlows.set(`${pulse.star.constellationIndex}:${pulse.star.index}`, now);
+                    return false;
+                }
+                if (progress < 0 || !ambientStars[pulse.ambientIndex]) return progress < 1;
+
+                const target = positionedConstellations[pulse.star.constellationIndex].stars[pulse.star.index];
+                const source = ambientStars[pulse.ambientIndex];
+                drawCircle(
+                    source.x + (target.x - source.x) * progress,
+                    source.y + (target.y - source.y) * progress,
+                    2,
+                    withAlpha(accentStrong, 0.72)
+                );
+                return true;
+            });
+        }
+
+        function render(now, reducedMotion) {
+            const elapsed = reducedMotion ? 0 : now - startTime;
+            const rotationAngle = elapsed * ROTATION_RADIANS_PER_MS;
+            const accent = cssColor('--accent', colorFallbacks.accent);
+            const accentStrong = cssColor('--accent-strong', colorFallbacks.accentStrong);
+            const positionedConstellations = constellationPositions(rotationAngle);
+            const namedStars = allNamedStars(positionedConstellations);
+
+            ctx.clearRect(0, 0, width, height);
+            drawBackdrop(now);
+            drawProximityLinks(namedStars, accent);
+            ambientStars.forEach((star) => drawCircle(star.x, star.y, star.radius, withAlpha(accent, 0.50)));
+            drawConstellations(positionedConstellations, now, accent, accentStrong);
+            drawPulses(positionedConstellations, now, accentStrong);
+        }
+
+        function frame(now) {
+            const reducedMotion = Boolean(motionQuery?.matches);
+            const delta = lastTime ? Math.min(48, now - lastTime) : 16;
+            lastTime = now;
+
+            updateAmbientStars(delta, reducedMotion);
+
+            if (!reducedMotion) {
+                if (now - lastConstellationPulse >= CONSTELLATION_LINE_INTERVAL) {
+                    spawnConstellationPulse(now);
+                    lastConstellationPulse = now;
+                }
+                const positionedConstellations = constellationPositions((now - startTime) * ROTATION_RADIANS_PER_MS);
+                if (now - lastAmbientPulse >= AMBIENT_PULSE_INTERVAL) {
+                    spawnAmbientPulse(now, positionedConstellations);
+                    lastAmbientPulse = now;
+                }
+            }
+
+            render(now, reducedMotion);
+            if (!reducedMotion && hasAnimationFrame) {
+                animationFrame = window.requestAnimationFrame(frame);
+            }
+        }
+
+        function stopLoop() {
+            if (animationFrame !== null && canCancelAnimationFrame) {
+                window.cancelAnimationFrame(animationFrame);
+            }
+            animationFrame = null;
+        }
+
+        function start() {
+            stopLoop();
+            resizeCanvas();
+            startTime = performance.now();
+            lastTime = 0;
+            lastConstellationPulse = startTime;
+            lastAmbientPulse = startTime;
+
+            if (motionQuery?.matches || !hasAnimationFrame) {
+                render(0, true);
+                return;
+            }
+
+            animationFrame = window.requestAnimationFrame(frame);
+        }
+
+        window.addEventListener('resize', start);
+
+        if (motionQuery) {
+            const handleMotionChange = () => {
+                stopLoop();
+                constellationPulses = [];
+                ambientPulses = [];
+                starGlows = new Map();
+                if (motionQuery.matches) {
+                    render(0, true);
+                } else {
+                    start();
+                }
+            };
+
+            if (typeof motionQuery.addEventListener === 'function') {
+                motionQuery.addEventListener('change', handleMotionChange);
+            } else if (typeof motionQuery.addListener === 'function') {
+                motionQuery.addListener(handleMotionChange);
+            }
+        }
+
+        start();
+    } catch (error) {
+        console.warn('Constellation background could not be initialized.', error);
+    }
+}
+
 // Carousel, modal, nav, and contact form logic
 document.addEventListener('DOMContentLoaded', () => {
+    initConstellationBackground();
+
     // --- Site Nav --- //
     const navToggle = document.getElementById('nav-toggle');
     const navLinks = document.getElementById('nav-links');

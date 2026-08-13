@@ -59,6 +59,13 @@ describe('main.js browser behavior', () => {
     site.cleanup();
   });
 
+  it('schedules the constellation animation when motion is enabled', () => {
+    const site = loadSite({ reducedMotion: false });
+
+    expect(site.window.requestAnimationFrame).toHaveBeenCalled();
+    site.cleanup();
+  });
+
   it('renders 10 project tiles in 6-item pages without clone-buffer items', () => {
     const site = loadSite();
     const pages = Array.from(site.document.querySelectorAll('.project-page'));
