@@ -255,12 +255,46 @@ h3 {
   justify-content: space-between;
 }
 
+.nav-brand-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .nav-brand {
   font-family: var(--font-display);
   font-size: 1.3rem;
   color: var(--fg);
   text-decoration: none;
   letter-spacing: 0.5px;
+}
+
+.nav-divider {
+  width: 1px;
+  height: 22px;
+  background: var(--border-strong);
+}
+
+.nav-social {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.nav-social-link {
+  display: flex;
+}
+
+.nav-social-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  transition: transform 0.15s ease, opacity 0.2s ease;
+}
+
+.nav-social-link:hover .nav-social-icon {
+  transform: translateY(-2px);
+  opacity: 0.85;
 }
 
 #nav-links {
