@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Catenna placeholder icon">
+  <defs>
+    <linearGradient id="catenna-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#121826"/>
+      <stop offset="100%" stop-color="#0b0f17"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#catenna-bg)"/>
+  <g fill="none" stroke="#35c2b5" stroke-width="18">
+    <rect x="118" y="118" width="110" height="150" rx="55" transform="rotate(-18 173 193)"/>
+    <rect x="172" y="132" width="110" height="150" rx="55" transform="rotate(-18 227 207)"/>
+  </g>
+  <text x="200" y="336" text-anchor="middle" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="600" fill="#58d9cd">Catenna</text>
+</svg>
