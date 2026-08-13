@@ -311,6 +311,11 @@ h3 {
   opacity: 0.85;
 }
 
+/* The GitHub mark ships as solid black; invert it to white so it reads against the dark background. */
+.icon-invert {
+  filter: invert(1);
+}
+
 #nav-links {
   display: flex;
   gap: 2rem;
