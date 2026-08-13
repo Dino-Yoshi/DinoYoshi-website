@@ -1,10 +1,23 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { loadSite } from './helpers/loadSite.js';
 
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const css = fs.readFileSync(path.join(repoRoot, 'style.css'), 'utf8');
 const typingText = 'Darien Chau';
-const projectTexts = (document) => Array.from(document.querySelectorAll('.project-item p'), (item) => item.textContent);
-const activeProjectText = (document) => document.querySelector('.project-item.active p').textContent;
-const transitionEnd = (window, carousel) => carousel.dispatchEvent(new window.Event('transitionend'));
+const placeholderDescription = 'Project details coming soon — check back for a full write-up of this build.';
+
+const pageTexts = (page) => Array.from(page.querySelectorAll('.project-item p'), (item) => item.textContent);
+const transitionEnd = (window, carousel) => {
+  const event = new window.Event('transitionend', { bubbles: true });
+  Object.defineProperty(event, 'propertyName', {
+    configurable: true,
+    value: 'transform'
+  });
+  carousel.dispatchEvent(event);
+};
 
 afterEach(() => {
   vi.useRealTimers();
@@ -46,94 +59,109 @@ describe('main.js browser behavior', () => {
     site.cleanup();
   });
 
-  it('initializes carousel clones in the expected order', () => {
+  it('renders 9 project tiles in 6-item pages without clone-buffer items', () => {
     const site = loadSite();
-    const texts = projectTexts(site.document);
+    const pages = Array.from(site.document.querySelectorAll('.project-page'));
+    const projects = Array.from(site.document.querySelectorAll('.project-item'));
 
-    expect(texts).toHaveLength(10);
-    expect(texts.slice(0, 4)).toEqual([
+    expect(projects).toHaveLength(9);
+    expect(pages).toHaveLength(2);
+    expect(pageTexts(pages[0])).toEqual([
+      'Reinforcement Learning - BattleBoxAI',
+      'Machine Learning - DogCheck',
+      'MESA U HACKS 2025 - 2nd Best Pitch',
+      'Learning Assistant - California State University, East Bay',
       'Hack Hayward 2025',
-      'Student Tutor - Step Up Tutoring',
-      'Reinforcement Learning - BattleBoxAI',
-      'Machine Learning - DogCheck'
+      'Student Tutor - Step Up Tutoring'
     ]);
-    expect(texts.slice(-2)).toEqual([
-      'Reinforcement Learning - BattleBoxAI',
-      'Machine Learning - DogCheck'
+    expect(pageTexts(pages[1])).toEqual([
+      'Immersive Enchanting',
+      'Catenna',
+      'Minecraft Mod Development'
     ]);
-    expect(activeProjectText(site.document)).toBe('Reinforcement Learning - BattleBoxAI');
+    expect(projects.map((project) => project.dataset.projectIndex)).toEqual([
+      '0',
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8'
+    ]);
+    expect(site.document.querySelector('.project-item.active')).toBeNull();
     site.cleanup();
   });
 
-  it('updates active carousel item and transform for prev and next clicks', () => {
-    const site = loadSite({ projectWidth: 200 });
+  it('keeps the partial second page in the first row-major cells', () => {
+    const site = loadSite();
+    const secondPage = site.document.querySelectorAll('.project-page')[1];
+    const tiles = Array.from(secondPage.children);
+
+    expect(secondPage.dataset.pageIndex).toBe('1');
+    expect(tiles).toHaveLength(3);
+    expect(tiles.map((tile) => tile.dataset.projectIndex)).toEqual(['6', '7', '8']);
+    expect(css).toMatch(/\.project-page\s*{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/s);
+    site.cleanup();
+  });
+
+  it('navigates by page and wraps in both directions with finite seam pages', () => {
+    const site = loadSite();
     const carousel = site.document.querySelector('.projects-carousel');
+    const prev = site.document.getElementById('prev-button');
+    const next = site.document.getElementById('next-button');
 
-    expect(carousel.style.transform).toBe('translateX(-200px)');
+    expect(site.document.getElementById('prev-button').getAttribute('aria-label')).toBe('Previous page');
+    expect(site.document.getElementById('next-button').getAttribute('aria-label')).toBe('Next page');
+    expect(carousel.style.transform).toBe('translateX(-0%)');
 
-    site.document.getElementById('next-button').click();
-    expect(activeProjectText(site.document)).toBe('Machine Learning - DogCheck');
-    expect(carousel.style.transform).toBe('translateX(-400px)');
+    next.click();
+    expect(carousel.style.transform).toBe('translateX(-100%)');
     transitionEnd(site.window, carousel);
+    expect(site.document.querySelectorAll('.project-page')).toHaveLength(2);
 
-    site.document.getElementById('prev-button').click();
-    expect(activeProjectText(site.document)).toBe('Reinforcement Learning - BattleBoxAI');
-    expect(carousel.style.transform).toBe('translateX(-200px)');
+    next.click();
+    expect(site.document.querySelectorAll('.project-page')).toHaveLength(3);
+    expect(carousel.style.transform).toBe('translateX(-200%)');
+    transitionEnd(site.window, carousel);
+    expect(site.document.querySelectorAll('.project-page')).toHaveLength(2);
+    expect(carousel.style.transform).toBe('translateX(-0%)');
+
+    prev.click();
+    expect(site.document.querySelectorAll('.project-page')).toHaveLength(3);
+    expect(carousel.style.transform).toBe('translateX(0)');
+    transitionEnd(site.window, carousel);
+    expect(site.document.querySelectorAll('.project-page')).toHaveLength(2);
+    expect(carousel.style.transform).toBe('translateX(-100%)');
     site.cleanup();
   });
 
-  it('wraps from the clone before the real range to the last real project', () => {
-    const site = loadSite({ projectWidth: 200 });
-    const carousel = site.document.querySelector('.projects-carousel');
-
-    site.document.getElementById('prev-button').click();
-    expect(activeProjectText(site.document)).toBe('Student Tutor - Step Up Tutoring');
-
-    transitionEnd(site.window, carousel);
-    expect(activeProjectText(site.document)).toBe('Student Tutor - Step Up Tutoring');
-    expect(carousel.style.transform).toBe('translateX(-1200px)');
-    expect(carousel.style.transition).toBe('none');
-    site.cleanup();
-  });
-
-  it('wraps from the clone after the real range to the first real project', () => {
-    const site = loadSite({ projectWidth: 200 });
+  it('ignores rapid page clicks while a transition is active', () => {
+    const site = loadSite();
     const carousel = site.document.querySelector('.projects-carousel');
     const next = site.document.getElementById('next-button');
 
-    for (let index = 0; index < 6; index += 1) {
-      next.click();
-      transitionEnd(site.window, carousel);
-    }
-
-    expect(activeProjectText(site.document)).toBe('Reinforcement Learning - BattleBoxAI');
-    expect(carousel.style.transform).toBe('translateX(-200px)');
-    expect(carousel.style.transition).toBe('none');
-    site.cleanup();
-  });
-
-  it('recomputes carousel transform on resize without changing the active project', () => {
-    const site = loadSite({ projectWidth: 200 });
-    const carousel = site.document.querySelector('.projects-carousel');
-
-    site.document.getElementById('next-button').click();
+    next.click();
+    next.click();
+    expect(carousel.style.transform).toBe('translateX(-100%)');
+    expect(site.document.querySelectorAll('.project-page')).toHaveLength(2);
     transitionEnd(site.window, carousel);
-    site.window.__projectWidth = 250;
-    site.window.dispatchEvent(new site.window.Event('resize'));
-
-    expect(activeProjectText(site.document)).toBe('Machine Learning - DogCheck');
-    expect(carousel.style.transform).toBe('translateX(-500px)');
     site.cleanup();
   });
 
-  it('opens the modal from the active item and maps the carousel index to project details', () => {
+  it('defines the hover pop-out hook and contained square image rules', () => {
+    expect(css).toMatch(/\.project-item:hover,\s*\.project-item:focus-visible\s*{[^}]*scale\(1\.02\)/s);
+    expect(css).toMatch(/\.project-media\s*{[^}]*aspect-ratio:\s*1 \/ 1/s);
+    expect(css).toMatch(/\.project-image\s*{[^}]*object-fit:\s*contain/s);
+    expect(css).toMatch(/@media \(max-width:\s*800px\)\s*{[\s\S]*\.project-page\s*{[^}]*grid-template-columns:\s*1fr/s);
+  });
+
+  it('opens the bottom sheet from any visible tile with linked project details', () => {
     const site = loadSite();
-    const carousel = site.document.querySelector('.projects-carousel');
     const modal = site.document.getElementById('project-modal');
 
-    site.document.getElementById('next-button').click();
-    transitionEnd(site.window, carousel);
-    site.document.querySelector('.project-item.active').click();
+    site.document.querySelector('[data-project-index="1"]').click();
 
     const titleLink = site.document.querySelector('#modal-title a');
     expect(modal.classList.contains('active')).toBe(true);
@@ -142,6 +170,36 @@ describe('main.js browser behavior', () => {
     expect(titleLink.target).toBe('_blank');
     expect(titleLink.rel).toBe('noopener noreferrer');
     expect(site.document.getElementById('modal-description').textContent).toContain('Between November and December 2025');
+    expect(css).toMatch(/\.modal\.active\s*{[^}]*align-items:\s*flex-end/s);
+    expect(css).toMatch(/\.modal-content\s*{[^}]*transform:\s*translateY\(calc\(100% \+ 1\.5rem\)\)/s);
+    expect(css).toMatch(/\.modal\.active \.modal-content\s*{[^}]*transform:\s*translateY\(0\)/s);
+    site.cleanup();
+  });
+
+  it('opens placeholder projects as plain titles with no missing image references', () => {
+    const site = loadSite();
+    const placeholderTile = site.document.querySelector('[data-project-index="6"]');
+
+    expect(placeholderTile.querySelector('img')).toBeNull();
+    expect(placeholderTile.querySelector('.project-placeholder')).not.toBeNull();
+
+    placeholderTile.click();
+
+    expect(site.document.querySelector('#modal-title a')).toBeNull();
+    expect(site.document.getElementById('modal-title').textContent).toBe('Immersive Enchanting');
+    expect(site.document.getElementById('modal-description').textContent).toBe(placeholderDescription);
+    site.cleanup();
+  });
+
+  it('clears a previous title anchor when opening a placeholder project', () => {
+    const site = loadSite();
+
+    site.document.querySelector('[data-project-index="0"]').click();
+    expect(site.document.querySelector('#modal-title a')).not.toBeNull();
+
+    site.document.querySelector('[data-project-index="7"]').click();
+    expect(site.document.querySelector('#modal-title a')).toBeNull();
+    expect(site.document.getElementById('modal-title').textContent).toBe('Catenna');
     site.cleanup();
   });
 
@@ -149,7 +207,7 @@ describe('main.js browser behavior', () => {
     const site = loadSite();
     const modal = site.document.getElementById('project-modal');
 
-    site.document.querySelector('.project-item.active').click();
+    site.document.querySelector('[data-project-index="0"]').click();
     expect(modal.classList.contains('active')).toBe(true);
 
     site.document.querySelector('.modal-content').click();
@@ -158,7 +216,7 @@ describe('main.js browser behavior', () => {
     site.document.querySelector('.close-button').click();
     expect(modal.classList.contains('active')).toBe(false);
 
-    site.document.querySelector('.project-item.active').click();
+    site.document.querySelector('[data-project-index="0"]').click();
     site.window.dispatchEvent(new site.window.MouseEvent('click', { bubbles: true }));
     expect(modal.classList.contains('active')).toBe(true);
     modal.dispatchEvent(new site.window.MouseEvent('click', { bubbles: true }));
