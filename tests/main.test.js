@@ -59,12 +59,12 @@ describe('main.js browser behavior', () => {
     site.cleanup();
   });
 
-  it('renders 9 project tiles in 6-item pages without clone-buffer items', () => {
+  it('renders 10 project tiles in 6-item pages without clone-buffer items', () => {
     const site = loadSite();
     const pages = Array.from(site.document.querySelectorAll('.project-page'));
     const projects = Array.from(site.document.querySelectorAll('.project-item'));
 
-    expect(projects).toHaveLength(9);
+    expect(projects).toHaveLength(10);
     expect(pages).toHaveLength(2);
     expect(pageTexts(pages[0])).toEqual([
       'Reinforcement Learning - BattleBoxAI',
@@ -77,7 +77,8 @@ describe('main.js browser behavior', () => {
     expect(pageTexts(pages[1])).toEqual([
       'Immersive Enchanting',
       'Catenna',
-      'Minecraft Mod Development'
+      'Minecraft Mod Development',
+      'SI Leader - California State University, East Bay'
     ]);
     expect(projects.map((project) => project.dataset.projectIndex)).toEqual([
       '0',
@@ -88,7 +89,8 @@ describe('main.js browser behavior', () => {
       '5',
       '6',
       '7',
-      '8'
+      '8',
+      '9'
     ]);
     expect(site.document.querySelector('.project-item.active')).toBeNull();
     site.cleanup();
@@ -100,8 +102,8 @@ describe('main.js browser behavior', () => {
     const tiles = Array.from(secondPage.children);
 
     expect(secondPage.dataset.pageIndex).toBe('1');
-    expect(tiles).toHaveLength(3);
-    expect(tiles.map((tile) => tile.dataset.projectIndex)).toEqual(['6', '7', '8']);
+    expect(tiles).toHaveLength(4);
+    expect(tiles.map((tile) => tile.dataset.projectIndex)).toEqual(['6', '7', '8', '9']);
     expect(css).toMatch(/\.project-page\s*{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/s);
     site.cleanup();
   });
@@ -183,14 +185,14 @@ describe('main.js browser behavior', () => {
     site.cleanup();
   });
 
-  it('opens placeholder projects as plain titles with no missing image references', () => {
+  it('opens link-less projects as plain titles with their icon images intact', () => {
     const site = loadSite();
-    const placeholderTile = site.document.querySelector('[data-project-index="6"]');
+    const linklessTile = site.document.querySelector('[data-project-index="6"]');
 
-    expect(placeholderTile.querySelector('img')).toBeNull();
-    expect(placeholderTile.querySelector('.project-placeholder')).not.toBeNull();
+    expect(linklessTile.querySelector('img')).not.toBeNull();
+    expect(linklessTile.querySelector('.project-placeholder')).toBeNull();
 
-    placeholderTile.click();
+    linklessTile.click();
 
     expect(site.document.querySelector('#modal-title a')).toBeNull();
     expect(site.document.getElementById('modal-title').textContent).toBe('Immersive Enchanting');
