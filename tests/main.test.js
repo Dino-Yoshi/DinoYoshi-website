@@ -152,12 +152,14 @@ describe('main.js browser behavior', () => {
 
   it('defines the hover pop-out hook and contained square image rules', () => {
     expect(css).toMatch(/\.project-item:hover,\s*\.project-item:focus-visible\s*{[^}]*scale\(1\.02\)/s);
+    expect(css).toMatch(/\.project-page\s*{[^}]*box-sizing:\s*border-box/s);
+    expect(css).toMatch(/\.project-page\s*{[^}]*padding:\s*1\.25rem/s);
     expect(css).toMatch(/\.project-media\s*{[^}]*aspect-ratio:\s*1 \/ 1/s);
     expect(css).toMatch(/\.project-image\s*{[^}]*object-fit:\s*contain/s);
     expect(css).toMatch(/@media \(max-width:\s*800px\)\s*{[\s\S]*\.project-page\s*{[^}]*grid-template-columns:\s*1fr/s);
   });
 
-  it('opens the bottom sheet from any visible tile with linked project details', () => {
+  it('opens the centered project card from any visible tile with linked project details', () => {
     const site = loadSite();
     const modal = site.document.getElementById('project-modal');
 
@@ -170,8 +172,13 @@ describe('main.js browser behavior', () => {
     expect(titleLink.target).toBe('_blank');
     expect(titleLink.rel).toBe('noopener noreferrer');
     expect(site.document.getElementById('modal-description').textContent).toContain('Between November and December 2025');
-    expect(css).toMatch(/\.modal\.active\s*{[^}]*align-items:\s*flex-end/s);
-    expect(css).toMatch(/\.modal-content\s*{[^}]*transform:\s*translateY\(calc\(100% \+ 1\.5rem\)\)/s);
+    expect(css).toMatch(/\.modal\s*{[^}]*display:\s*flex/s);
+    expect(css).toMatch(/\.modal\s*{[^}]*justify-content:\s*center/s);
+    expect(css).toMatch(/\.modal\s*{[^}]*align-items:\s*center/s);
+    expect(css).not.toMatch(/\.modal\.active\s*{[^}]*align-items:\s*flex-end/s);
+    expect(css).toMatch(/\.modal-content\s*{[^}]*max-width:\s*48rem/s);
+    expect(css).not.toMatch(/\.modal-content\s*{[^}]*min-height:/s);
+    expect(css).toMatch(/\.modal-content\s*{[^}]*transform:\s*translateY\(2rem\)/s);
     expect(css).toMatch(/\.modal\.active \.modal-content\s*{[^}]*transform:\s*translateY\(0\)/s);
     site.cleanup();
   });
