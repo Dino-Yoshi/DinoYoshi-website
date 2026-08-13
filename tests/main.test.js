@@ -73,18 +73,18 @@ describe('main.js browser behavior', () => {
     expect(projects).toHaveLength(10);
     expect(pages).toHaveLength(2);
     expect(pageTexts(pages[0])).toEqual([
+      'Catenna',
+      'Immersive Enchanting',
+      'Minecraft Mod Development',
+      'SI Leader - California State University, East Bay',
       'Reinforcement Learning - BattleBoxAI',
-      'Machine Learning - DogCheck',
+      'Machine Learning - DogCheck'
+    ]);
+    expect(pageTexts(pages[1])).toEqual([
       'MESA U HACKS 2025 - 2nd Best Pitch',
       'Learning Assistant - California State University, East Bay',
       'Hack Hayward 2025',
       'Student Tutor - Step Up Tutoring'
-    ]);
-    expect(pageTexts(pages[1])).toEqual([
-      'Immersive Enchanting',
-      'Catenna',
-      'Minecraft Mod Development',
-      'SI Leader - California State University, East Bay'
     ]);
     expect(projects.map((project) => project.dataset.projectIndex)).toEqual([
       '0',
@@ -171,7 +171,7 @@ describe('main.js browser behavior', () => {
     const site = loadSite();
     const modal = site.document.getElementById('project-modal');
 
-    site.document.querySelector('[data-project-index="1"]').click();
+    site.document.querySelector('[data-project-index="5"]').click();
 
     const titleLink = site.document.querySelector('#modal-title a');
     expect(modal.classList.contains('active')).toBe(true);
@@ -193,7 +193,7 @@ describe('main.js browser behavior', () => {
 
   it('opens link-less projects as plain titles with their icon images intact', () => {
     const site = loadSite();
-    const linklessTile = site.document.querySelector('[data-project-index="6"]');
+    const linklessTile = site.document.querySelector('[data-project-index="1"]');
 
     expect(linklessTile.querySelector('img')).not.toBeNull();
     expect(linklessTile.querySelector('.project-placeholder')).toBeNull();
@@ -209,10 +209,10 @@ describe('main.js browser behavior', () => {
   it('clears a previous title anchor when opening a placeholder project', () => {
     const site = loadSite();
 
-    site.document.querySelector('[data-project-index="0"]').click();
+    site.document.querySelector('[data-project-index="4"]').click();
     expect(site.document.querySelector('#modal-title a')).not.toBeNull();
 
-    site.document.querySelector('[data-project-index="7"]').click();
+    site.document.querySelector('[data-project-index="0"]').click();
     expect(site.document.querySelector('#modal-title a')).toBeNull();
     expect(site.document.getElementById('modal-title').textContent).toBe('Catenna');
     site.cleanup();
