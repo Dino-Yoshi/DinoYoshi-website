@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Link to external stylesheet for all page styles. See style.css for font, layout, and animation details. -->
-  <link rel="stylesheet" href="style.css?v=86f9742">
+  <link rel="stylesheet" href="style.css?v=5539dae">
   <!-- Enables EmailJS usage -->
   <script type="text/javascript"
         src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
@@ -23,7 +23,21 @@
   <!-- Site Navigation -->
   <header id="site-nav">
     <div class="nav-inner">
-      <a href="#about-me" class="nav-brand">Darien Chau</a>
+      <div class="nav-brand-group">
+        <a href="#about-me" class="nav-brand">Darien Chau</a>
+        <span class="nav-divider" aria-hidden="true"></span>
+        <div class="nav-social">
+          <a href="https://github.com/Dino-Yoshi" class="nav-social-link" target="_blank" rel="noopener" aria-label="GitHub">
+            <img src="./images/github.png" alt="" class="nav-social-icon">
+          </a>
+          <a href="https://www.linkedin.com/in/darien-chau/" class="nav-social-link" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <img src="./images/linkedin.png" alt="" class="nav-social-icon">
+          </a>
+          <a href="https://app.joinhandshake.com/profiles/darien_chau" class="nav-social-link" target="_blank" rel="noopener" aria-label="Handshake">
+            <img src="./images/handshake.jpg" alt="" class="nav-social-icon">
+          </a>
+        </div>
+      </div>
       <button id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -47,7 +61,7 @@
     </div>
 
     <!-- Logic Script -->
-    <script src="main.js?v=86f9742" defer></script>
+    <script src="main.js?v=5539dae" defer></script>
 
     <div class="about-me-content">
       <img src="./images/darien.png" alt="Darien Chau Headshot" class="profile-picture">
@@ -149,7 +163,7 @@
   </section>
 
   <footer id="site-footer">
-    <p>&copy; <span id="year"></span> Darien Chau. Built from scratch.</p>
+    <p>&copy; <span id="year"></span> Darien Chau.</p>
   </footer>
   </main>
 </body>
