@@ -7,7 +7,6 @@ import { loadSite } from './helpers/loadSite.js';
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const css = fs.readFileSync(path.join(repoRoot, 'style.css'), 'utf8');
 const typingText = 'Darien Chau';
-const placeholderDescription = 'Project details coming soon — check back for a full write-up of this build.';
 
 const pageTexts = (page) => Array.from(page.querySelectorAll('.project-item p'), (item) => item.textContent);
 const transitionEnd = (window, carousel) => {
@@ -203,7 +202,7 @@ describe('main.js browser behavior', () => {
 
     expect(site.document.querySelector('#modal-title a')).toBeNull();
     expect(site.document.getElementById('modal-title').textContent).toBe('Immersive Enchanting');
-    expect(site.document.getElementById('modal-description').textContent).toBe(placeholderDescription);
+    expect(site.document.getElementById('modal-description').textContent).toContain('Immersive Enchanting Backport');
     site.cleanup();
   });
 
